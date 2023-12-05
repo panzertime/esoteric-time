@@ -6,8 +6,9 @@ from collections import namedtuple
 from datetime import datetime
 from itertools import cycle
 
-from mechanics import Position
-import mechanics
+from . import mechanics
+from .mechanics import Position
+
 
 PHILOSOPHY = ["This is the dawning of the Age of Aquarius",
               "When the Moon is in the seventh house and Jupiter aligns with Mars", 

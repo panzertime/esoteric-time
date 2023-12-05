@@ -1,10 +1,12 @@
 import tkinter as tk
 from datetime import datetime, timedelta
-from itertools import cycle
 from threading import Thread
+from os import environ
+
 from playsound import playsound
 
-import astrologer
+from . import astrologer
+from . import *
 
 def romanize(input):
     # bastardized from some o'reilly cookbook
@@ -32,11 +34,14 @@ class OsamCalendar(tk.Label):
         self.contents.set(self.getDate())
 
     def write(self):
+        print("writing Calendar")
         self.config(textvariable=self.contents)
         self.contents.set(self.getDate())
         self.after(1000, self.write)
+        print("wrote Calendar")
 
     def getDate(self):
+        print("getting Date")
         julian = datetime.today() - timedelta(days = 13)
 
         year = julian.year + 5508
@@ -44,6 +49,7 @@ class OsamCalendar(tk.Label):
             year += 1
         date_string = str(julian.day) + " / " + romanize(julian.month) + " / " + str(year)
         time_string = str(julian.hour - 12 if julian.hour > 12 else (12 if julian.hour == 0 else julian.hour)) + " : " + str(julian.minute).zfill(2) + " : " + str(julian.second).zfill(2) + (" PM" if julian.hour > 11 else " AM")
+        print("got Date")
         return date_string + "\n" + time_string
     
 class Astrologer(tk.Frame):
@@ -87,16 +93,31 @@ class Astrologer(tk.Frame):
         self.aquariusFrame.pack_forget()
 
     def dawnAquarius(self):
+        print("DAWN CALLED")
         self.aquariusFrame.pack()
         self.isAquarius = True
-        Thread(target=playsound, args=['./aquarius.mp3']).start()
+        
+        # does not work right:
+        #with resources.as_file(resources.files(package="esoteric_time") / 'aquarius.mp3') as sound:
+        #    Thread(target=playsound, args=[sound]).start()
+
+        # does seem to work with py2app:
+        sound = environ["RESOURCEPATH"] + "/aquarius.mp3"
+        Thread(target=playsound, args=[sound]).start()
+
+        # does not work right:
+        #path = Path(resources.files(package="esoteric_time")).parents[2] / 'aquarius.mp3'
+        #print(str(path))
+        #Thread(target=playsound, args=[str(path)]).start()
         self.waxEloquent()
+        print("waxed eloquent")
 
     def sunsetAquarius(self):
         self.aquariusFrame.pack_forget()
         self.isAquarius = False
 
     def waxEloquent(self):
+        print("waxing eloquent")
         if self.philosophyCounter == 3:
             self.philosophyCounter = 0
         line = astrologer.PHILOSOPHY[self.philosophyCounter]
@@ -107,6 +128,7 @@ class Astrologer(tk.Frame):
 
     def augur(self):
         alignment = astrologer.alignmentToAngular(astrologer.computeCurrentAlignment())
+        print(str(alignment))
         self.moonHouseBox.config(state="normal")
         self.moonHouse.set(romanize(alignment.moonHouse))
         self.moonHouseBox.config(state="readonly")
@@ -114,7 +136,9 @@ class Astrologer(tk.Frame):
         self.planetaryAngle.set(angleFormat(alignment.jupiterMarsAngle))
         self.planetaryAngleBox.config(state="readonly")
         if (not self.isAquarius) and astrologer.isMomentAquarian(alignment):
+            print("DAWNING IN AUGUR")
             self.dawnAquarius()
         elif self.isAquarius and (not astrologer.isMomentAquarian(alignment)):
+            print("SUNSET IN AUGUR")
             self.sunsetAquarius()
         self.after(60000, self.augur)
