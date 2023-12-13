@@ -49,10 +49,7 @@ def isMomentAquarian(moment: Alignment | AngularAlignment):
     if moment.moonHouse != 7:
         return False
     if moment is Alignment:
-        if mechanics.arePlanetsAligned(moment.marsPos, moment.jupiterPos):
-            return False
+        return mechanics.arePlanetsAligned(moment.marsPos, moment.jupiterPos)
     else:
-        if moment.jupiterMarsAngle < .8:
-            return False
-    return True
+        return (moment.jupiterMarsAngle < .8)
 
