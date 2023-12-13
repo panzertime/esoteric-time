@@ -42,7 +42,7 @@ def run():
     root.title = "O.S. Anno Mundi"
     root.resizable(False,False)
     root.wm_attributes("-topmost", True)
-    print("made root")
+    # print("made root")
 
     mainFrame = tk.Frame(root, padx=5, pady=5)
     mainFrame.pack()
@@ -51,27 +51,24 @@ def run():
     calendarFrame.pack(fill="x")
     calendar = OsamCalendar(calendarFrame)
     calendar.pack()
-    print("made calendar")
+    # print("made calendar")
 
     astrologyFrame = tk.Frame(mainFrame, relief="groove", borderwidth=2)
     astrologyFrame.pack(fill="x")
     astrologer = Astrologer(astrologyFrame)
     astrologer.pack()
-    print("made astrologer")
+    # print("made astrologer")
 
     calendar.write()
-    print("wrote calendar")
+    # print("wrote calendar")
     astrologer.augur()
-    print("augured")
+    # print("augured")
 
     menubar = tk.Menu(root)
     Timemenu = tk.Menu(menubar, tearoff=0)
     Timemenu.add_command(label="Simulate Aquarius", command=lambda: astrologer.dawnAquarius())
+    Timemenu.add_checkbutton(label="Hammond Party", command=lambda: astrologer.getHip())
     menubar.add_cascade(label="Time", menu=Timemenu)
 
     root.config(menu=menubar)
     root.mainloop()
-
-    print("main loop started")
-
-

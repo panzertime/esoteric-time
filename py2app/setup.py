@@ -8,7 +8,7 @@ Usage:
 from setuptools import setup
 
 APP = ['myApp.py']
-DATA_FILES = ['esoteric_time/aquarius.mp3']
+DATA_FILES = ['esoteric_time/aquarius.mp3', 'esoteric_time/hammond_aquarius.mp3']
 OPTIONS = {
     'iconfile': 'digital-clock.icns'
 }

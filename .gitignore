@@ -1,3 +1,11 @@
+# extra stuff
+
+*.DS_Store
+.vscode/
+experimental/
+notes.md
+variables
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

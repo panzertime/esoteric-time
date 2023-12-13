@@ -5,7 +5,7 @@ from os import environ
 
 from playsound import playsound
 
-from . import astrologer
+from . import astrology
 from . import *
 
 def romanize(input):
@@ -34,14 +34,14 @@ class OsamCalendar(tk.Label):
         self.contents.set(self.getDate())
 
     def write(self):
-        print("writing Calendar")
+        # print("writing Calendar")
         self.config(textvariable=self.contents)
         self.contents.set(self.getDate())
         self.after(1000, self.write)
-        print("wrote Calendar")
+        # print("wrote Calendar")
 
     def getDate(self):
-        print("getting Date")
+        # print("getting Date")
         julian = datetime.today() - timedelta(days = 13)
 
         year = julian.year + 5508
@@ -49,7 +49,7 @@ class OsamCalendar(tk.Label):
             year += 1
         date_string = str(julian.day) + " / " + romanize(julian.month) + " / " + str(year)
         time_string = str(julian.hour - 12 if julian.hour > 12 else (12 if julian.hour == 0 else julian.hour)) + " : " + str(julian.minute).zfill(2) + " : " + str(julian.second).zfill(2) + (" PM" if julian.hour > 11 else " AM")
-        print("got Date")
+        # print("got Date")
         return date_string + "\n" + time_string
     
 class Astrologer(tk.Frame):
@@ -89,11 +89,12 @@ class Astrologer(tk.Frame):
 
         self.philosophyCounter = 0
         self.isAquarius = False
+        self.uncool = True
 
         self.aquariusFrame.pack_forget()
 
     def dawnAquarius(self):
-        print("DAWN CALLED")
+        # print("DAWN CALLED")
         self.aquariusFrame.pack()
         self.isAquarius = True
         
@@ -102,43 +103,46 @@ class Astrologer(tk.Frame):
         #    Thread(target=playsound, args=[sound]).start()
 
         # does seem to work with py2app:
-        sound = environ["RESOURCEPATH"] + "/aquarius.mp3"
+        sound = environ["RESOURCEPATH"] + ("/aquarius.mp3" if self.uncool else "/hammond_aquarius.mp3")
         Thread(target=playsound, args=[sound]).start()
 
         # does not work right:
         #path = Path(resources.files(package="esoteric_time")).parents[2] / 'aquarius.mp3'
-        #print(str(path))
+        # print(str(path))
         #Thread(target=playsound, args=[str(path)]).start()
         self.waxEloquent()
-        print("waxed eloquent")
+        # print("waxed eloquent")
 
     def sunsetAquarius(self):
         self.aquariusFrame.pack_forget()
         self.isAquarius = False
 
     def waxEloquent(self):
-        print("waxing eloquent")
+        # print("waxing eloquent")
         if self.philosophyCounter == 3:
             self.philosophyCounter = 0
-        line = astrologer.PHILOSOPHY[self.philosophyCounter]
+        line = astrology.PHILOSOPHY[self.philosophyCounter]
         self.aquariusPhilosophy.configure(text=line)
         self.philosophyCounter += 1
         if self.isAquarius:
             self.after(2500, self.waxEloquent)
 
     def augur(self):
-        alignment = astrologer.alignmentToAngular(astrologer.computeCurrentAlignment())
-        print(str(alignment))
+        alignment = astrology.alignmentToAngular(astrology.computeCurrentAlignment())
+        # print(str(alignment))
         self.moonHouseBox.config(state="normal")
         self.moonHouse.set(romanize(alignment.moonHouse))
         self.moonHouseBox.config(state="readonly")
         self.planetaryAngleBox.config(state="normal")
         self.planetaryAngle.set(angleFormat(alignment.jupiterMarsAngle))
         self.planetaryAngleBox.config(state="readonly")
-        if (not self.isAquarius) and astrologer.isMomentAquarian(alignment):
-            print("DAWNING IN AUGUR")
+        if (not self.isAquarius) and astrology.isMomentAquarian(alignment):
+            # print("DAWNING IN AUGUR")
             self.dawnAquarius()
-        elif self.isAquarius and (not astrologer.isMomentAquarian(alignment)):
-            print("SUNSET IN AUGUR")
+        elif self.isAquarius and (not astrology.isMomentAquarian(alignment)):
+            # print("SUNSET IN AUGUR")
             self.sunsetAquarius()
         self.after(60000, self.augur)
+
+    def getHip(self):
+        self.uncool = not self.uncool
